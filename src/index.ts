@@ -41,7 +41,7 @@ export class TokenBucketCalculator {
     this.lastFillMSec = getMSec();
   }
 
-  async removeTokens(tokens: number): Promise<number> {
+  public async removeTokens(tokens: number): Promise<number> {
     this.fillTokens();
 
     const waitTime = this.calcTimeForRemovingTokens(tokens);
@@ -53,7 +53,7 @@ export class TokenBucketCalculator {
     return this.subContent(tokens);
   }
 
-  calcTimeForRemovingTokens(tokens: number): number {
+  public calcTimeForRemovingTokens(tokens: number): number {
     if (this.content < tokens) {
       const willRemoveTokens = tokens - this.content;
       const msecPerAmount = this.fillIntervalMSec / this.fillAmount;
@@ -63,7 +63,7 @@ export class TokenBucketCalculator {
     }
   }
 
-  fillTokens() {
+  private fillTokens() {
     const nowMSec = getMSec();
     const timeForAfterFillingMSec = nowMSec - this.lastFillMSec;
 
@@ -75,15 +75,15 @@ export class TokenBucketCalculator {
     this.addContent(tokenToFillAmount);
   }
 
-  setLastFillMSec(ms: number) {
+  private setLastFillMSec(ms: number) {
     this.lastFillMSec = ms;
   }
 
-  addContent(tokens: number) {
+  private addContent(tokens: number) {
     return (this.content = Math.min(this.bucketSize, this.content + tokens));
   }
 
-  subContent(tokens: number) {
+  private subContent(tokens: number) {
     return (this.content = Math.max(0, this.content - tokens));
   }
 }
