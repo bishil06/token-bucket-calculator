@@ -24,30 +24,38 @@ export class TokenBucketCalculator {
     this.bucketSize = bucketSize;
     this.fillAmount = fillAmount;
 
-    if (fillIntervalUnit === 'sec') {
-      this.fillIntervalMSec = 1000;
-    } else if (fillIntervalUnit === 'min') {
-      this.fillIntervalMSec = 1000 * 60;
-    } else if (fillIntervalUnit === 'hr') {
-      this.fillIntervalMSec = 1000 * 60 * 60;
-    } else if (fillIntervalUnit === 'day') {
-      this.fillIntervalMSec = 1000 * 60 * 60 * 24;
-    } else {
-      this.fillIntervalMSec = 1;
-    }
+    this.fillIntervalMSec = this.calcFillIntervalMSec(fillIntervalUnit);
 
     this.content = startBucketFirstFill ? this.fillIntervalMSec : 0;
 
     this.lastFillMSec = getMSec();
   }
 
+  private calcFillIntervalMSec(
+    fillIntervalUnit: 'ms' | 'sec' | 'min' | 'hr' | 'day' = 'ms'
+  ) {
+    if (fillIntervalUnit === 'sec') {
+      return 1000;
+    } else if (fillIntervalUnit === 'min') {
+      return 1000 * 60;
+    } else if (fillIntervalUnit === 'hr') {
+      return 1000 * 60 * 60;
+    } else if (fillIntervalUnit === 'day') {
+      return 1000 * 60 * 60 * 24;
+    } else {
+      return 1;
+    }
+  }
+
   async removeTokens(tokens: number): Promise<number> {
-    this.fillTokens();
+    const nowFillAmout = this.fillAmount;
+    const nowFillIntervalMSec = this.fillIntervalMSec;
+    this.fillTokens(nowFillAmout, nowFillIntervalMSec);
 
     const waitTime = this.calcTimeForRemovingTokens(tokens);
     if (waitTime !== 0) {
       await wait(waitTime);
-      this.fillTokens();
+      this.fillTokens(nowFillAmout, nowFillIntervalMSec);
     }
 
     return this.subContent(tokens);
@@ -63,14 +71,17 @@ export class TokenBucketCalculator {
     }
   }
 
-  private fillTokens() {
+  private fillTokens(
+    fillAmount = this.fillAmount,
+    fillIntervalMSec = this.fillIntervalMSec
+  ) {
     const nowMSec = getMSec();
     const timeForAfterFillingMSec = nowMSec - this.lastFillMSec;
 
     this.setLastFillMSec(nowMSec);
 
     const tokenToFillAmount =
-      timeForAfterFillingMSec * (this.fillAmount / this.fillIntervalMSec);
+      timeForAfterFillingMSec * (fillAmount / fillIntervalMSec);
 
     this.addContent(tokenToFillAmount);
   }
