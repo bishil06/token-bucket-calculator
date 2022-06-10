@@ -47,9 +47,18 @@ export class TokenBucketCalculator {
     }
   }
 
+  changeFillAmount(
+    fillAmount: number,
+    fillIntervalUnit: 'ms' | 'sec' | 'min' | 'hr' | 'day' = 'ms'
+  ) {
+    this.fillAmount = fillAmount;
+    this.fillIntervalMSec = this.calcFillIntervalMSec(fillIntervalUnit);
+  }
+
   async removeTokens(tokens: number): Promise<number> {
     const nowFillAmout = this.fillAmount;
     const nowFillIntervalMSec = this.fillIntervalMSec;
+
     this.fillTokens(nowFillAmout, nowFillIntervalMSec);
 
     const waitTime = this.calcTimeForRemovingTokens(tokens);
