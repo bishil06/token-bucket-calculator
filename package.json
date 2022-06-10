@@ -1,6 +1,6 @@
 {
   "name": "token-bucket-calculator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Token Bucket Calculator",
   "main": "index.js",
   "scripts": {
