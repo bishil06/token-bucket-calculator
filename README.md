@@ -8,7 +8,7 @@ npm i token-bucket-calculator
 
 ## example
 ```js
-const { TokenBucketCalculator } = require('../dist/index');
+const { TokenBucketCalculator } = require('token-bucket-calculator');
 
 const tb = new TokenBucketCalculator({
   bucketSize: 10,
