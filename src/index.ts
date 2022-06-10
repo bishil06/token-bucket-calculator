@@ -41,7 +41,7 @@ export class TokenBucketCalculator {
     this.lastFillMSec = getMSec();
   }
 
-  public async removeTokens(tokens: number): Promise<number> {
+  async removeTokens(tokens: number): Promise<number> {
     this.fillTokens();
 
     const waitTime = this.calcTimeForRemovingTokens(tokens);
@@ -53,7 +53,7 @@ export class TokenBucketCalculator {
     return this.subContent(tokens);
   }
 
-  public calcTimeForRemovingTokens(tokens: number): number {
+  calcTimeForRemovingTokens(tokens: number): number {
     if (this.content < tokens) {
       const willRemoveTokens = tokens - this.content;
       const msecPerAmount = this.fillIntervalMSec / this.fillAmount;
