@@ -8,7 +8,7 @@ export interface TokenBucketCalculatorOption {
   startBucketFirstFill?: boolean;
 }
 
-export default class TokenBucketCalculator {
+export class TokenBucketCalculator {
   bucketSize: number;
   fillIntervalMSec: number;
   fillAmount: number;
