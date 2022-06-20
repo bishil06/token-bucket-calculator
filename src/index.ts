@@ -14,6 +14,7 @@ export class TokenBucketCalculator {
   fillAmount: number;
   content: number;
   lastFillMSec: number;
+  isRunningRemovingTokensTask: Promise<number> | undefined = undefined;
 
   constructor({
     bucketSize,
@@ -56,6 +57,17 @@ export class TokenBucketCalculator {
   }
 
   async removeTokens(tokens: number): Promise<number> {
+    if (this.isRunningRemovingTokensTask === undefined) {
+      return (this.isRunningRemovingTokensTask = this.removeTokensTask(tokens));
+    } else {
+      return (this.isRunningRemovingTokensTask =
+        this.isRunningRemovingTokensTask.then(() =>
+          this.removeTokensTask(tokens)
+        ));
+    }
+  }
+
+  async removeTokensTask(tokens: number): Promise<number> {
     const nowFillAmout = this.fillAmount;
     const nowFillIntervalMSec = this.fillIntervalMSec;
 
